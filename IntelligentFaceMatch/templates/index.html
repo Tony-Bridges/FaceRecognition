@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Face Recognition System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="p-5 mb-4 bg-dark rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold text-primary">Face Recognition System</h1>
+            <p class="col-md-8 fs-4">A modern system for face recognition with real-time camera integration, vector search, and comprehensive dashboard.</p>
+            <a href="/dashboard" class="btn btn-primary btn-lg">
+                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="row align-items-md-stretch">
+        <div class="col-md-6 mb-4">
+            <div class="h-100 p-5 bg-dark border rounded-3">
+                <h2 class="fw-bold"><i class="fas fa-user-plus me-2"></i>Register New Face</h2>
+                <p>Add new faces to the recognition database with just a photo. Our system will automatically extract facial features.</p>
+                <a href="/register" class="btn btn-outline-primary">Register Face</a>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="h-100 p-5 bg-dark border rounded-3">
+                <h2 class="fw-bold"><i class="fas fa-video me-2"></i>Manage Cameras</h2>
+                <p>Set up and configure cameras for real-time face recognition. Add IP cameras or use local webcams.</p>
+                <a href="/dashboard" class="btn btn-outline-primary">Manage Cameras</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-md-stretch">
+        <div class="col-md-4 mb-4">
+            <div class="h-100 p-4 bg-dark border rounded-3 text-center">
+                <i class="fas fa-microchip text-primary mb-3" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold">Deep Learning Models</h4>
+                <p>Utilizing advanced deep learning models for facial recognition with high accuracy and performance.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="h-100 p-4 bg-dark border rounded-3 text-center">
+                <i class="fas fa-database text-primary mb-3" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold">Vector Database</h4>
+                <p>Fast similarity search using vector embeddings for efficient and scalable recognition.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="h-100 p-4 bg-dark border rounded-3 text-center">
+                <i class="fas fa-chart-line text-primary mb-3" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold">Analytics Dashboard</h4>
+                <p>Comprehensive dashboard to monitor recognition events and manage the database.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+
+{% block title %}Register Face - Face Recognition System{% endblock %}
+
+{% block head %}
+<style>
+    .registration-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    #videoContainer, #imagePreview {
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: #343a40;
+        aspect-ratio: 4/3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #videoContainer video, #imagePreview img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .capture-btn {
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+    }
+    .face-quality-meter {
+        height: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .camera-selector {
+        margin-bottom: 15px;
+    }
+    .control-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .result-feedback {
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+    }
+    .result-success {
+        background-color: rgba(25, 135, 84, 0.2);
+        border: 1px solid #198754;
+    }
+    .result-error {
+        background-color: rgba(220, 53, 69, 0.2);
+        border: 1px solid #dc3545;
+    }
+    .bg-progress {
+        background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #198754 100%);
+    }
+    .instructions {
+        background-color: rgba(13, 110, 253, 0.1);
+        border-left: 4px solid #0d6efd;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 0 5px 5px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 registration-container">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"><i class="fas fa-user-plus me-2"></i>Register Face</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="/dashboard" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h5><i class="fas fa-info-circle me-2"></i>Instructions</h5>
+        <p>To register a new face in the system:</p>
+        <ol>
+            <li>Select a camera from the dropdown menu</li>
+            <li>Position the face in the center of the frame</li>
+            <li>Ensure good lighting and a neutral expression</li>
+            <li>Click "Capture" or upload an image</li>
+            <li>Enter a name for the person</li>
+            <li>Click "Register" to save to the database</li>
+        </ol>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card bg-dark mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Face Capture</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Camera selector -->
+                    <div class="camera-selector">
+                        <label for="cameraSelect" class="form-label">Select Camera</label>
+                        <select class="form-select mb-3" id="cameraSelect">
+                            <option value="">-- Select a camera --</option>
+                            {% for camera in cameras %}
+                                <option value="{{ camera.camera_id }}">{{ camera.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Video display -->
+                    <div class="position-relative mb-3">
+                        <div id="videoContainer">
+                            <div id="noVideoMessage" class="text-center p-5">
+                                <i class="fas fa-video-slash mb-3" style="font-size: 3rem; color: #6c757d;"></i>
+                                <p>No camera selected. Please select a camera or upload an image.</p>
+                            </div>
+                        </div>
+                        <button id="captureBtn" class="btn btn-primary rounded-circle capture-btn" style="display:none;">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+
+                    <!-- Image upload option -->
+                    <div class="control-row">
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                            <button class="btn btn-outline-secondary" type="button" id="clearImageBtn" disabled>Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card bg-dark mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Face Details</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Preview -->
+                    <div id="imagePreview" class="mb-3">
+                        <div id="noImageMessage" class="text-center p-4">
+                            <i class="fas fa-image mb-3" style="font-size: 3rem; color: #6c757d;"></i>
+                            <p>No image captured yet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Face quality indicator -->
+                    <div id="qualityIndicator" style="display:none;">
+                        <div class="d-flex justify-content-between">
+                            <small>Face Quality:</small>
+                            <small id="qualityScore">0%</small>
+                        </div>
+                        <div class="face-quality-meter">
+                            <div class="progress" style="height: 100%;">
+                                <div id="qualityBar" class="progress-bar bg-progress" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration form -->
+                    <form id="registerForm" class="mt-3">
+                        <div class="mb-3">
+                            <label for="personName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="personName" placeholder="Enter person's name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes (optional)</label>
+                            <textarea class="form-control" id="notes" rows="2" placeholder="Add any additional information"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="registerBtn" disabled>
+                            <i class="fas fa-save me-2"></i>Register Face
+                        </button>
+                    </form>
+
+                    <!-- Results feedback -->
+                    <div id="resultFeedback" style="display:none;" class="result-feedback">
+                        <div id="resultContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // DOM elements
+    const cameraSelect = document.getElementById('cameraSelect');
+    const videoContainer = document.getElementById('videoContainer');
+    const captureBtn = document.getElementById('captureBtn');
+    const imageUpload = document.getElementById('imageUpload');
+    const clearImageBtn = document.getElementById('clearImageBtn');
+    const imagePreview = document.getElementById('imagePreview');
+    const noImageMessage = document.getElementById('noImageMessage');
+    const qualityIndicator = document.getElementById('qualityIndicator');
+    const qualityBar = document.getElementById('qualityBar');
+    const qualityScore = document.getElementById('qualityScore');
+    const personName = document.getElementById('personName');
+    const notes = document.getElementById('notes');
+    const registerBtn = document.getElementById('registerBtn');
+    const registerForm = document.getElementById('registerForm');
+    const resultFeedback = document.getElementById('resultFeedback');
+    const resultContent = document.getElementById('resultContent');
+
+    // Selected camera and captured image
+    let selectedCamera = null;
+    let capturedImage = null;
+
+    // Setup event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Camera selection
+        cameraSelect.addEventListener('change', function() {
+            selectedCamera = this.value;
+            if (selectedCamera) {
+                videoContainer.innerHTML = `
+                    <img src="/video/${selectedCamera}" alt="Camera Feed" class="w-100">
+                `;
+                captureBtn.style.display = 'block';
+            } else {
+                videoContainer.innerHTML = `
+                    <div id="noVideoMessage" class="text-center p-5">
+                        <i class="fas fa-video-slash mb-3" style="font-size: 3rem; color: #6c757d;"></i>
+                        <p>No camera selected. Please select a camera or upload an image.</p>
+                    </div>
+                `;
+                captureBtn.style.display = 'none';
+            }
+        });
+
+        // Capture button
+        captureBtn.addEventListener('click', function() {
+            // This is a mock implementation
+            capturedImage = { 
+                src: `/video/${selectedCamera}`,
+                file: null
+            };
+            updatePreview();
+            
+            // Mock quality analysis
+            setTimeout(function() {
+                showQualityIndicator(0.85);
+                enableRegistration();
+            }, 800);
+        });
+
+        // Image upload
+        imageUpload.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    capturedImage = {
+                        src: e.target.result,
+                        file: file
+                    };
+                    updatePreview();
+                    
+                    // Mock quality analysis for uploaded image
+                    setTimeout(function() {
+                        showQualityIndicator(0.78);
+                        enableRegistration();
+                    }, 800);
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Clear button
+        clearImageBtn.addEventListener('click', function() {
+            clearCapturedImage();
+        });
+
+        // Registration form
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!capturedImage || !personName.value.trim()) {
+                showError('Please capture an image and enter a name.');
+                return;
+            }
+            
+            // Mock form data that would be sent to server
+            const formData = new FormData();
+            formData.append('name', personName.value.trim());
+            if (notes.value.trim()) {
+                formData.append('notes', notes.value.trim());
+            }
+            
+            // If we had a real image file
+            if (capturedImage.file) {
+                formData.append('image', capturedImage.file);
+            }
+            
+            // Mock API call
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Registering...';
+            
+            // Simulate registration with the server
+            fetch('/api/faces/register', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess(`Face registered successfully with ID: ${data.face_id}`);
+                    clearForm();
+                } else {
+                    showError(`Error: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred during registration.');
+            })
+            .finally(() => {
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-save me-2"></i>Register Face';
+            });
+        });
+
+        // Name input check
+        personName.addEventListener('input', function() {
+            checkRegistrationEnabled();
+        });
+    });
+
+    // Utility functions
+    function updatePreview() {
+        if (capturedImage) {
+            imagePreview.innerHTML = `<img src="${capturedImage.src}" alt="Captured Face">`;
+            clearImageBtn.disabled = false;
+        } else {
+            imagePreview.innerHTML = `
+                <div id="noImageMessage" class="text-center p-4">
+                    <i class="fas fa-image mb-3" style="font-size: 3rem; color: #6c757d;"></i>
+                    <p>No image captured yet.</p>
+                </div>
+            `;
+            clearImageBtn.disabled = true;
+        }
+    }
+
+    function showQualityIndicator(score) {
+        qualityIndicator.style.display = 'block';
+        const percent = Math.round(score * 100);
+        qualityBar.style.width = `${percent}%`;
+        qualityScore.textContent = `${percent}%`;
+    }
+
+    function enableRegistration() {
+        checkRegistrationEnabled();
+    }
+
+    function checkRegistrationEnabled() {
+        registerBtn.disabled = !(capturedImage && personName.value.trim());
+    }
+
+    function clearCapturedImage() {
+        capturedImage = null;
+        updatePreview();
+        qualityIndicator.style.display = 'none';
+        registerBtn.disabled = true;
+        imageUpload.value = '';
+    }
+
+    function clearForm() {
+        clearCapturedImage();
+        personName.value = '';
+        notes.value = '';
+    }
+
+    function showSuccess(message) {
+        resultFeedback.className = 'result-feedback result-success';
+        resultContent.innerHTML = `<i class="fas fa-check-circle me-2"></i>${message}`;
+        resultFeedback.style.display = 'block';
+    }
+
+    function showError(message) {
+        resultFeedback.className = 'result-feedback result-error';
+        resultContent.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>${message}`;
+        resultFeedback.style.display = 'block';
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480' viewBox='0 0 640 480'>
+  <rect width='640' height='480' fill='#2d2d2d'/>
+  <text x='320' y='240' fill='#999' font-family='Arial' font-size='24' text-anchor='middle'>Camera Feed Not Available</text>
+  <rect x='245' y='260' width='150' height='2' fill='#999'/>
+  <circle cx='320' cy='180' r='50' stroke='#999' stroke-width='3' fill='none'/>
+  <circle cx='320' cy='180' r='20' fill='#999'/>
+  <path d='M320 245 L320 320' stroke='#999' stroke-width='3'/>
+  <path d='M280 270 L360 270' stroke='#999' stroke-width='3'/>
+  <path d='M280 295 L360 295' stroke='#999' stroke-width='3'/>
+</svg>

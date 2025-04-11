@@ -1,0 +1,74 @@
+{
+  "metrics": {
+    "enabled": true,
+    "port": 9090
+  },
+  "scaling": {
+    "load_balancing": {
+      "enabled": true,
+      "strategy": "round_robin",
+      "health_check_interval": 30,
+      "node_failure_threshold": 3,
+      "auto_failover": true
+    },
+    "sharding": {
+      "enabled": true,
+      "strategy": "uniform",
+      "shard_count": 3,
+      "shard_urls": [
+        "postgresql://user:password@localhost:5432/face_db_1",
+        "postgresql://user:password@localhost:5432/face_db_2",
+        "postgresql://user:password@localhost:5432/face_db_3"
+      ]
+    }
+  },
+  "features": {
+    "emotion_detection": true,
+    "emotion_detection_backend": "opencv",
+    "age_gender_estimation": true,
+    "age_gender_backend": "opencv",
+    "re_identification": true,
+    "re_identification_config": {
+      "similarity_threshold": 0.7,
+      "tracking_timeout": 300,
+      "max_history": 1000
+    },
+    "active_learning": true,
+    "active_learning_config": {
+      "data_dir": "./active_learning_data",
+      "confidence_threshold": 0.65,
+      "selection_strategy": "least_confidence",
+      "batch_size": 10,
+      "feedback_interval": 3600,
+      "auto_retraining": true
+    }
+  },
+  "recognition": {
+    "model": "insightface",
+    "similarity_threshold": 0.6,
+    "min_face_size": 50,
+    "gpu_acceleration": false
+  },
+  "camera": {
+    "default_fps": 10,
+    "max_resolution": "1280x720",
+    "mjpeg_quality": 80
+  },
+  "database": {
+    "auto_create_tables": true,
+    "connection_pool_size": 10,
+    "query_timeout": 10
+  },
+  "api": {
+    "max_request_size": "10MB",
+    "rate_limit": 100,
+    "cors_enabled": true,
+    "authentication_required": true
+  },
+  "logging": {
+    "level": "INFO",
+    "file_path": "./logs/system.log",
+    "max_file_size": "10MB",
+    "backup_count": 5
+  }
+}

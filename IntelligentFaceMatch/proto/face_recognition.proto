@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package face_recognition;
+
+service FaceRecognitionService {
+  // Register a face in the database
+  rpc RegisterFace (RegisterFaceRequest) returns (RegisterFaceResponse);
+  
+  // Recognize faces in an image
+  rpc RecognizeFaces (RecognizeRequest) returns (RecognizeResponse);
+  
+  // Get all registered faces
+  rpc ListFaces (ListFacesRequest) returns (ListFacesResponse);
+  
+  // Delete a face from the database
+  rpc DeleteFace (DeleteFaceRequest) returns (DeleteFaceResponse);
+  
+  // Update face metadata
+  rpc UpdateFaceMetadata (UpdateMetadataRequest) returns (UpdateMetadataResponse);
+  
+  // Get face quality score
+  rpc GetFaceQuality (FaceQualityRequest) returns (FaceQualityResponse);
+  
+  // Verify liveness of face
+  rpc VerifyLiveness (LivenessRequest) returns (LivenessResponse);
+}
+
+message Face {
+  string face_id = 1;
+  string name = 2;
+  repeated float embedding = 3;
+  FaceRect rect = 4;
+  FaceMetadata metadata = 5;
+  float quality_score = 6;
+}
+
+message FaceRect {
+  int32 x = 1;
+  int32 y = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+
+message FaceMetadata {
+  string registered_by = 1;
+  string device_id = 2;
+  string registration_date = 3;
+  string last_accessed = 4;
+  map<string, string> additional_info = 5;
+}
+
+message RegisterFaceRequest {
+  bytes image = 1;
+  string name = 2;
+  FaceMetadata metadata = 3;
+  bool verify_liveness = 4;
+}
+
+message RegisterFaceResponse {
+  bool success = 1;
+  string face_id = 2;
+  string message = 3;
+  float quality_score = 4;
+}
+
+message RecognizeRequest {
+  bytes image = 1;
+  float threshold = 2;
+  int32 max_results = 3;
+}
+
+message RecognizeResponse {
+  repeated FaceMatch matches = 1;
+}
+
+message FaceMatch {
+  Face face = 1;
+  float confidence = 2;
+}
+
+message ListFacesRequest {
+  int32 offset = 1;
+  int32 limit = 2;
+}
+
+message ListFacesResponse {
+  repeated Face faces = 1;
+  int32 total = 2;
+}
+
+message DeleteFaceRequest {
+  string face_id = 1;
+}
+
+message DeleteFaceResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UpdateMetadataRequest {
+  string face_id = 1;
+  FaceMetadata metadata = 2;
+}
+
+message UpdateMetadataResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message FaceQualityRequest {
+  bytes image = 1;
+}
+
+message FaceQualityResponse {
+  float quality_score = 1;
+  map<string, float> quality_factors = 2;
+}
+
+message LivenessRequest {
+  bytes image = 1;
+  string session_id = 2;
+}
+
+message LivenessResponse {
+  bool is_live = 1;
+  float confidence = 2;
+  string message = 3;
+}

@@ -1,0 +1,180 @@
+/* 
+ * Custom CSS for Face Recognition System
+ * This follows the styling guidelines to use Bootstrap classes as much as possible
+ * and only add custom styling when necessary.
+ */
+
+/* General layout improvements */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container, .container-fluid {
+    flex: 1;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/* Card styling enhancements */
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Feature icons on homepage */
+.feature-icon {
+    background-color: rgba(13, 110, 253, 0.1);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Camera feed enhancements */
+.camera-feed {
+    transition: transform 0.3s ease;
+}
+
+.camera-container:hover .camera-feed {
+    transform: scale(1.02);
+}
+
+/* Face cards styling */
+.face-card {
+    transition: all 0.3s ease;
+}
+
+.face-card:hover {
+    border-color: var(--bs-primary);
+    transform: translateY(-5px);
+}
+
+.face-card .face-icon {
+    color: var(--bs-secondary);
+}
+
+.face-card:hover .face-icon {
+    color: var(--bs-primary);
+}
+
+/* Dashboard improvements */
+.recognition-log {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bs-secondary) var(--bs-dark);
+}
+
+.recognition-log::-webkit-scrollbar {
+    width: 8px;
+}
+
+.recognition-log::-webkit-scrollbar-track {
+    background: var(--bs-dark);
+}
+
+.recognition-log::-webkit-scrollbar-thumb {
+    background-color: var(--bs-secondary);
+    border-radius: 4px;
+}
+
+/* Registration form enhancements */
+.quality-factors {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bs-secondary) var(--bs-dark);
+}
+
+.quality-factors::-webkit-scrollbar {
+    width: 6px;
+}
+
+.quality-factors::-webkit-scrollbar-track {
+    background: var(--bs-dark);
+}
+
+.quality-factors::-webkit-scrollbar-thumb {
+    background-color: var(--bs-secondary);
+    border-radius: 3px;
+}
+
+/* Improved button styles */
+.btn-outline-light:hover {
+    color: var(--bs-dark);
+}
+
+/* Capture button pulse animation */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(13, 110, 253, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+    }
+}
+
+.camera-container .btn-primary {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .camera-controls {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        z-index: auto;
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .steps-container {
+        padding-left: 40px;
+    }
+    
+    .step-number {
+        width: 30px;
+        height: 30px;
+        left: -40px;
+    }
+}
+
+/* Modal improvements */
+.modal-content {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Progress bar animations */
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Chart enhancements */
+canvas {
+    transition: all 0.3s ease;
+}
+
+/* Placeholder styling */
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}

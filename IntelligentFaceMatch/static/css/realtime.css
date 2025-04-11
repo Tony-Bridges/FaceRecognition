@@ -1,0 +1,576 @@
+/**
+ * Realtime CSS styles for face recognition dashboard
+ * Includes animations, transitions and notification styles
+ */
+
+/* WebSocket Connection Status Indicator */
+.connection-status {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 1;
+}
+
+.connection-status.connected {
+  background-color: rgba(40, 167, 69, 0.9);
+  color: white;
+}
+
+.connection-status.disconnected {
+  background-color: rgba(220, 53, 69, 0.9);
+  color: white;
+}
+
+.connection-status::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.connection-status.connected::before {
+  background-color: #ffffff;
+  animation: pulse 2s infinite;
+}
+
+.connection-status.disconnected::before {
+  background-color: #ffffff;
+}
+
+.connection-status .error-message {
+  font-size: 12px;
+  margin-top: 4px;
+  opacity: 0.9;
+}
+
+.connection-status.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+/* Notifications */
+#notifications-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 350px;
+}
+
+.notification {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: var(--bs-gray-800);
+  color: var(--bs-light);
+  transform: translateX(120%);
+  transition: transform 0.3s ease-out, opacity 0.3s ease;
+  opacity: 0;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border-left: 4px solid;
+}
+
+.notification.visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.notification.closing {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+.notification.info {
+  border-left-color: var(--bs-info);
+}
+
+.notification.success {
+  border-left-color: var(--bs-success);
+}
+
+.notification.warning {
+  border-left-color: var(--bs-warning);
+}
+
+.notification.error {
+  border-left-color: var(--bs-danger);
+}
+
+.notification-icon {
+  margin-right: 12px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification.info .notification-icon {
+  color: var(--bs-info);
+}
+
+.notification.success .notification-icon {
+  color: var(--bs-success);
+}
+
+.notification.warning .notification-icon {
+  color: var(--bs-warning);
+}
+
+.notification.error .notification-icon {
+  color: var(--bs-danger);
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.notification-message {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: var(--bs-gray-400);
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  margin-left: 10px;
+  transition: color 0.2s;
+}
+
+.notification-close:hover {
+  color: var(--bs-light);
+}
+
+/* Loading Animation for Dashboard Elements */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  margin: 20px auto;
+}
+
+.loading-spinner:before,
+.loading-spinner:after {
+  content: '';
+  display: block;
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--bs-primary);
+}
+
+.loading-spinner:before {
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  animation: spin 1.5s linear infinite;
+}
+
+.loading-spinner:after {
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Card animations */
+.face-card, .camera-card {
+  transition: all 0.3s ease;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.face-card.visible, .camera-card.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.face-card.removing, .camera-card.removing {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+/* Recognition log animations */
+.log-entry {
+  transition: all 0.3s ease;
+  transform-origin: center;
+  opacity: 0;
+  transform: translateX(-20px);
+  border-left: 3px solid transparent;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.log-entry.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.log-entry.recognized {
+  border-left-color: var(--bs-success);
+}
+
+.log-entry.unknown {
+  border-left-color: var(--bs-warning);
+}
+
+.log-entry .log-icon {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.log-entry .log-time {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+
+.log-entry .log-title {
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.log-entry .log-details {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.log-entry .log-details span {
+  margin-right: 10px;
+}
+
+/* Counter animations */
+.updating {
+  animation: highlight 0.5s ease;
+}
+
+@keyframes highlight {
+  0% {
+    color: inherit;
+  }
+  50% {
+    color: var(--bs-primary);
+  }
+  100% {
+    color: inherit;
+  }
+}
+
+/* Face preview animations */
+#face-preview {
+  transition: all 0.3s ease;
+  border: 2px dashed var(--bs-gray-400);
+  border-radius: 8px;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  opacity: 0.5;
+}
+
+#face-preview.has-preview {
+  border: 2px solid var(--bs-primary);
+  opacity: 1;
+}
+
+/* Quality score styling */
+.quality-score {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.quality-score.excellent {
+  background-color: rgba(40, 167, 69, 0.2);
+  color: var(--bs-success);
+}
+
+.quality-score.good {
+  background-color: rgba(0, 123, 255, 0.2);
+  color: var(--bs-primary);
+}
+
+.quality-score.fair {
+  background-color: rgba(255, 193, 7, 0.2);
+  color: var(--bs-warning);
+}
+
+.quality-score.poor {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: var(--bs-danger);
+}
+
+/* Camera status styling */
+.camera-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.camera-status.connected {
+  background-color: rgba(40, 167, 69, 0.2);
+  color: var(--bs-success);
+}
+
+.camera-status.disconnected {
+  background-color: rgba(108, 117, 125, 0.2);
+  color: var(--bs-secondary);
+}
+
+.camera-status.error {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: var(--bs-danger);
+}
+
+.camera-error {
+  font-size: 12px;
+  color: var(--bs-danger);
+  margin-top: 5px;
+}
+
+/* System metrics animations */
+.metric-card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Progress bars with animation */
+.progress-animated .progress-bar {
+  transition: width 1s ease;
+  animation: progress-animation 1s;
+}
+
+@keyframes progress-animation {
+  0% {
+    width: 0%;
+  }
+}
+
+/* Pulse animation for status indicators */
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.status-indicator.active {
+  background-color: var(--bs-success);
+  animation: pulse-green 2s infinite;
+}
+
+.status-indicator.inactive {
+  background-color: var(--bs-secondary);
+}
+
+.status-indicator.warning {
+  background-color: var(--bs-warning);
+  animation: pulse-yellow 2s infinite;
+}
+
+.status-indicator.error {
+  background-color: var(--bs-danger);
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(40, 167, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+  }
+}
+
+@keyframes pulse-yellow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(255, 193, 7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(220, 53, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+  }
+}
+
+/* Placeholder loading animation */
+.placeholder-loading {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bs-gray-200);
+  color: transparent;
+  animation: placeholder-wave 2s linear infinite;
+  border-radius: 4px;
+}
+
+@keyframes placeholder-wave {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Fade in animation for containers */
+.fade-in {
+  animation: fade-in 0.5s ease;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Hover effects */
+.interactive-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.interactive-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard widgets */
+.stat-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+  background-color: var(--bs-gray-800);
+  color: var(--bs-light);
+  position: relative;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.stat-card .stat-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.stat-card .stat-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 2rem;
+  opacity: 0.2;
+}
